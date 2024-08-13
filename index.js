@@ -10,49 +10,6 @@ const app = express();
 // define a port
 const PORT = 4000;
 
-// create a simple route
-app.get("/", (request, response) => {
-  response.send("Hello, world!");
-});
-
-// Make the server listen on our port
-app.listen(PORT, () => {
-  console.log(`The server is running on http://localhost:${PORT}`);
-});
-
-// Define our Middleware functions
-app.use((request, response, next) => {
-  console.log(`${request.method} request for ${request.url}`);
-  next();
-});
-
-// Use CORS Middleware
-app.use(cors());
-
-// Use JSON middleware to parse request bodies
-app.use(express.json());
-
-// Error Handling
-
-// handling 404 errors for unmatched routes
-app.use((error, request, response, next) => {
-  console.error(error.stack);
-  response.status(404).json({
-    message:
-      "Resource not found. Are you sure you're looking in the right place?",
-  });
-});
-
-// Generic error handling middleware
-app.use((error, request, response, next) => {
-  console.error(error.stack);
-  response
-    .status(500)
-    .json({ message: "Internal server error", error: error.message });
-});
-
-// ************** END BOILERPLATE CODE **************
-
 // MOCK DATA FOR DEMO
 const BEVERAGES = [
   {
@@ -138,6 +95,47 @@ const BEVERAGES = [
 ];
 
 // Define our routes
-app.get("/beverages", (request, response) => {
-  response.json(BEVERAGES);
+// create a simple route
+app.get("/", (request, response) => {
+  response.send("Hello, world!");
+});
+
+app.get("/beverages", (request, response, next) => {
+  try {
+    response.json(BEVERAGES);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Define our Middleware functions
+app.use((request, response, next) => {
+  console.log(`${request.method} request for ${request.url}`);
+  next();
+});
+
+// Use CORS Middleware
+app.use(cors());
+
+// Use JSON middleware to parse request bodies
+app.use(express.json());
+
+// Error Handling
+// Generic error handling middleware
+app.use((error, request, response, next) => {
+  console.error(error.stack);
+  response.status(500).send("Something broke!");
+});
+
+// handling 404 errors for unmatched routes
+app.use((request, response, next) => {
+  response.status(404).json({
+    message:
+      "Resource not found. Are you sure you're looking in the right place?",
+  });
+});
+
+// Make the server listen on our port
+app.listen(PORT, () => {
+  console.log(`The server is running on http://localhost:${PORT}`);
 });
