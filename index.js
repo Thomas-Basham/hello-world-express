@@ -10,17 +10,17 @@ const app = express();
 // define a port
 const PORT = 4000;
 
-// Define our Routes
-app.get("/", (request, response, next) => {
-  response.json({ hello: "World!" });
-});
-
 // Define our Middleware
 // Use CORS Middleware
 app.use(cors());
 
 // Use JSON middleware to parse request bodies
 app.use(express.json());
+
+// Define our Routes
+app.get("/", (request, response, next) => {
+  response.json({ hello: "World!" });
+});
 
 // Error Handling
 // Generic Error Handling
